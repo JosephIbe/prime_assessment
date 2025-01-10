@@ -1,0 +1,64 @@
+name: primed_health
+description: A new Flutter project.
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  get_it:
+  flutter_bloc:
+  equatable:
+  pedantic:
+  http:
+  cached_network_image:
+  another_flushbar: any
+  flutter_native_splash:
+  hive:
+  hive_flutter:
+  flutter_screenutil:
+  flutter_svg:
+  smooth_page_indicator:
+  fancy_shimmer_image: ^2.0.3
+  shimmer: ^3.0.0
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/images/primed_logo.jpeg
+  branding: assets/images/primed_logo.jpeg
+
+  android_12:
+    color: "#FFFFFF"
+    image: assets/images/primed_logo.jpeg
+
+  web: false
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.11.0
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+#  image_path: "assets/images/app_icon.jpg"
+  image_path: "assets/images/primed_logo.jpeg"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+
+flutter:
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/
+    - assets/svgs/
