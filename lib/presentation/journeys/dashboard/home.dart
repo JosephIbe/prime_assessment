@@ -79,8 +79,8 @@ class _HomeState extends State<Home> {
                         duration: const Duration(seconds: 1),
                         curve: Curves.fastLinearToSlowEaseIn,
                         width: index == currentIndex
-                            ? size.width * .27
-                            : size.width * .12,
+                            ? size.width * .35
+                            : size.width * .32,
                         height: Sizes.dimen_40,
                         alignment: Alignment.center,
                         child: AnimatedContainer(
@@ -88,7 +88,7 @@ class _HomeState extends State<Home> {
                           curve: Curves.fastLinearToSlowEaseIn,
                           height: index == currentIndex ? size.width * .12 : 0,
                           // height: Sizes.dimen_40,
-                          width: index == currentIndex ? size.width * .27 : 0,
+                          width: index == currentIndex ? size.width * .35 : 0,
                           decoration: BoxDecoration(
                             color: index == currentIndex
                                 ? AppColors.primaryColor

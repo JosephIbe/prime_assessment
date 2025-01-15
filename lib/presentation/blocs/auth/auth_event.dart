@@ -29,4 +29,6 @@ class VerifyEmailEvent extends AuthEvent {
 
 }
 
+class CheckAuthStatusEvent extends AuthEvent {}
+
 class BackStackEvent extends AuthEvent {}

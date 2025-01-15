@@ -10,5 +10,6 @@ class DBConstants {
   static const String email = "email";
   static const String jwtToken = "jwt_token";
   static const String phoneNumber = "phoneNumber";
+  static const String isEmailVerified = "false";
 
 }

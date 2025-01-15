@@ -62,6 +62,10 @@ class _ProductDetailsState extends State<ProductDetails> {
 
     return SafeArea(
         child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: AppColors.primaryColor.withOpacity(.5),
+            title: Text(widget.product.title)
+          ),
             body: SizedBox(
                 width: size.width,
                 height: size.height,

@@ -39,7 +39,7 @@ class AuthWrapper extends StatelessWidget {
                       )
                   ),
                 ),
-                SizedBox(height: Sizes.dimen_32.h,),
+                const SizedBox(height: Sizes.dimen_32,),
 
                 Padding(
                   padding: EdgeInsets.symmetric(

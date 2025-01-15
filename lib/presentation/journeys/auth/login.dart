@@ -90,6 +90,11 @@ class _LoginState extends State<Login>  {
                                   hintText: TextConstants.emailHint,
                                   labelText: TextConstants.emailLabel,
                                   validator: (v) {
+                                    if (v == null || v.isEmpty) {
+                                      return 'Email is required';
+                                    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
+                                      return 'Enter a valid email';
+                                    }
                                     return null;
                                   },
                                   isMini: false,
@@ -116,6 +121,11 @@ class _LoginState extends State<Login>  {
                                     }
                                   },
                                   validator: (v) {
+                                    if (v.isEmpty) {
+                                      return 'Password is required';
+                                    } else if (v.length < 8) {
+                                      return 'Password must be at least 8 characters long';
+                                    }
                                     return null;
                                   },
                                 ),

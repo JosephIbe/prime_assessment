@@ -47,6 +47,9 @@ dev_dependencies:
 
   flutter_lints: ^2.0.0
   flutter_launcher_icons: ^0.11.0
+  mocktail:
+  bloc_test:
+  hive_test:
 
 flutter_icons:
   android: "launcher_icon"

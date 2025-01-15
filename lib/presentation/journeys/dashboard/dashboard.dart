@@ -38,6 +38,7 @@ class _DashboardState extends State<Dashboard> {
   late Size size;
 
   late List<Product> productsList = [];
+  late int productsCount = 0;
   
   @override
   void initState() {
@@ -59,21 +60,30 @@ class _DashboardState extends State<Dashboard> {
         body: MultiBlocListener(
           listeners: [
             BlocListener<ProductsBloc, ProductsState>(
-              listener: (context, state) {
-                if(state is ProductsStateFailure){
+                listener: (context, state) {
+                  if(state is ProductsStateFailure){
 
-                  log('state.errorMessage fetching products:\n${state.errorMessage}');
+                    log('state.errorMessage fetching products:\n${state.errorMessage}');
 
-                  Flushbar(
-                    flushbarPosition: FlushbarPosition.TOP,
-                    duration: const Duration(milliseconds: 7500),
-                    backgroundColor: Colors.red,
-                    title: 'Error Fetching Data',
-                    icon: const Icon(Icons.error_outline),
-                    message: state.errorMessage,
+                    Flushbar(
+                      flushbarPosition: FlushbarPosition.TOP,
+                      duration: const Duration(milliseconds: 7500),
+                      backgroundColor: Colors.red,
+                      title: 'Error Fetching Data',
+                      icon: const Icon(Icons.error_outline),
+                      message: state.errorMessage,
                     ).show(context);
+                  }
+
+                  if(state is ProductsStateGetAllProductsSuccess){
+                    log('products.length:\t${state.products.length}');
+
+                    setState(() {
+                      productsCount = state.products.length;
+                      productsList = state.products;
+                    });
+                  }
                 }
-              }
             ),
           ],
           child: CustomScrollView(
@@ -86,7 +96,7 @@ class _DashboardState extends State<Dashboard> {
                       height: Sizes.dimen_175,
                       width: size.width,
                       padding: const EdgeInsets.fromLTRB(Sizes.dimen_16, Sizes.dimen_32, Sizes.dimen_16,Sizes.dimen_16),
-                      color: AppColors.primaryColor,
+                      color: AppColors.lightWhite,
                       child: Column(
                         children: [
                           Row(
@@ -105,7 +115,7 @@ class _DashboardState extends State<Dashboard> {
                                           Text(
                                             "Welcome,\t",
                                             style: TextStyle(
-                                                color: AppColors.lightWhite,
+                                                color: AppColors.primaryColor,
                                                 fontSize: Sizes.dimen_12.sp,
                                                 fontWeight: FontWeight.w400
                                             ),
@@ -120,7 +130,7 @@ class _DashboardState extends State<Dashboard> {
                                         child: Text(
                                           Hive.box(DBConstants.appBoxName).get(DBConstants.firstName) ?? "User",
                                           style: TextStyle(
-                                              color: AppColors.lightWhite,
+                                              color: AppColors.primaryColor,
                                               fontWeight: FontWeight.w700,
                                               fontSize: Sizes.dimen_16.sp
                                           ),
@@ -138,8 +148,52 @@ class _DashboardState extends State<Dashboard> {
                       ),
                     ),
                     const SizedBox(height: Sizes.dimen_20,),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: Sizes.dimen_16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Popular Items",
+                            style: TextStyle(
+                                fontSize: Sizes.dimen_12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.appBlack
+                            ),
+                          ),
+
+                          GestureDetector(
+                            onTap: ()=> Navigator.pushNamed(context, RouteLiterals.productDetailsRoute, arguments: productsList),
+                            child: Text(
+                              "View All",
+                              style: TextStyle(
+                                  fontSize: Sizes.dimen_12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.appBlack
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: Sizes.dimen_10,),
                   ],
                 ),
+              ),
+
+              productsCount > 0 ? SliverGrid.builder(
+                itemCount: productsCount < 10 ? productsCount : 10,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1/1.2,
+                ),
+                itemBuilder: (context, int? index){
+                  return ProductItem(product: productsList[index!]);
+                },
+                // ),
+              ) : const SliverToBoxAdapter(
+                child: EmptyState(title: "Nothing to display"),
               ),
             ]
           )

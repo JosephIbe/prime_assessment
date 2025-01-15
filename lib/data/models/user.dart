@@ -3,9 +3,9 @@ class User {
   String firstName;
   String lastName;
   String email;
-  DateTime createdAt;
+  DateTime? createdAt;
   bool? verifiedEmail;
-  DateTime updatedAt;
+  DateTime? updatedAt;
   String? phoneNumber;
 
   User({
@@ -13,9 +13,9 @@ class User {
     required this.firstName,
     required this.lastName,
     required this.email,
-    required this.createdAt,
+    this.createdAt,
     required this.verifiedEmail,
-    required this.updatedAt,
+    this.updatedAt,
     this.phoneNumber,
   });
 
@@ -35,9 +35,9 @@ class User {
     "firstName": firstName,
     "lastName": lastName,
     "email": email,
-    "createdAt": createdAt.toIso8601String(),
+    "createdAt": createdAt?.toIso8601String(),
     "verifiedEmail": verifiedEmail,
-    "updatedAt": updatedAt.toIso8601String(),
+    "updatedAt": updatedAt?.toIso8601String(),
     "phoneNumber": phoneNumber,
   };
 }

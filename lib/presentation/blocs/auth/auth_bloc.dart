@@ -24,7 +24,8 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
-  AuthRepository _repository;
+  final AuthRepository _repository;
+  final box = Hive.box(DBConstants.appBoxName);
 
   AuthBloc({required AuthRepository repository})
       : _repository = repository,
@@ -32,6 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<RegisterUserEvent>(_registerUser);
     on<LoginEvent>(_loginUser);
     on<VerifyEmailEvent>(_verifyEmail);
+    on<CheckAuthStatusEvent>(_checkAuthStatus);
     on<BackStackEvent>(_backStack);
   }
 
@@ -41,8 +43,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     log('register params in bloc :\n${event.registerParams}');
 
     http.Response response = await _repository.registerUser(params: event.registerParams);
-
-    final box = Hive.box(DBConstants.appBoxName);
 
     if(response.statusCode == 201){
       log('register response in bloc:\n$response');
@@ -54,6 +54,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       box.put(DBConstants.lastName, responseModel.user.lastName);
       box.put(DBConstants.email, responseModel.user.email);
       box.put(DBConstants.jwtToken, responseModel.token);
+
+      box.put(DBConstants.isEmailVerified, "false");
 
       emit(AuthStateRegisterSuccess(responseModel: responseModel));
 
@@ -74,8 +76,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if(response.statusCode == 200){
       final responseModel = VerifyEmailResponseModel.fromJson(jsonDecode(response.body));
-      // box.put(DBConstants.isLoggedIn, true);
       emit(AuthStateVerifyEmailSuccess(responseModel: responseModel));
+
+      box.put(DBConstants.isEmailVerified, "true");
+
     } else {
       final failure = ErrorResponseModel.fromJson(jsonDecode(response.body));
       emit(AuthStateFailure(failureMessage: failure.message));
@@ -88,8 +92,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     http.Response response = await _repository.loginUser(params: event.loginParams);
 
-    final box = Hive.box(DBConstants.appBoxName);
-
     if(response.statusCode == 200){
       final loginResponseModel = LoginResponseModel.fromJson(jsonDecode(response.body));
 
@@ -98,11 +100,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       box.put(DBConstants.lastName, loginResponseModel.user.lastName);
       box.put(DBConstants.email, loginResponseModel.user.email);
       box.put(DBConstants.jwtToken, loginResponseModel.token);
-      // box.put(DBConstants.isLoggedIn, true);
-      //
+
+      box.put(DBConstants.isEmailVerified, "true");
+
       log('fn from response:\t${loginResponseModel.user.firstName}');
 
-      // emit(AuthStateAuthenticated());
       emit(AuthStateLoginSuccess(responseModel: loginResponseModel));
 
     } else {
@@ -112,6 +114,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthStateFailure(failureMessage: failure.message));
     }
 
+  }
+
+  _checkAuthStatus(CheckAuthStatusEvent event, Emitter<AuthState> emit) async {
+    final box = Hive.box(DBConstants.appBoxName);
+
+    final token = box.get(DBConstants.jwtToken);
+    final emailVerified = box.get(DBConstants.isEmailVerified);
+
+
+    if (token != null && emailVerified == true) {
+      emit(AuthStateAuthenticated());
+    } else {
+      emit(AuthStateInitial());
+    }
   }
 
   _backStack(BackStackEvent event, Emitter<AuthState> emit) {
